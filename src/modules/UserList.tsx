@@ -47,7 +47,6 @@ export default function UserList() {
           </Modal>
         </div>
         <Table>
-          <TableCaption>A list of your recent invoices.</TableCaption>
           <TableHeader className="bg-primary">
             <TableRow>
               <TableHead className="w-[100px]">Index</TableHead>
