@@ -1,4 +1,3 @@
-import { designations } from "@/utils/constant";
 export type TUser = {
   id?: number;
   name: string;
@@ -16,23 +15,29 @@ export type Tdesignations = {
 };
 
 export interface AppState {
+  modalOpen: boolean;
+  userData: TUser[];
   dob: string;
   gender: string;
   designation: string;
   skills: string[];
   uploadedImage: File | null;
   imagePreview: string;
+  formType: string;
   loading: boolean;
   error: string | null;
 }
 
 export type AppAction =
+  | { type: "SET_MODAL_OPEN"; payload: boolean }
+  | { type: "SET_USER_DATA"; payload: TUser[] }
   | { type: "SET_DOB"; payload: string }
   | { type: "SET_GENDER"; payload: string }
   | { type: "SET_DESIGNATION"; payload: string }
   | { type: "SET_SKILLS"; payload: string[] }
   | { type: "SET_UPLOADED_IMAGE"; payload: File }
   | { type: "SET_IMAGE_PREVIEW"; payload: string }
+  | { type: "SET_FORM_TYPE"; payload: string }
   | { type: "SET_LOADING"; payload: boolean }
   | { type: "SET_ERROR"; payload: string | null }
   | { type: "RESET_FORM" };

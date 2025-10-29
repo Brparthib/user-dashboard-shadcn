@@ -147,3 +147,122 @@
     @apply bg-background text-foreground;
   }
 }
+
+
+/* react-select-style */
+.custom-select {
+  font-family: var(--font-sans);
+}
+
+.custom-select .select__control {
+  background-color: hsl(var(--background));
+  border: 1px solid hsl(var(--input));
+  border-radius: calc(var(--radius) - 2px);
+  min-height: 2.5rem;
+  padding: 0 0.75rem;
+  font-size: 0.875rem;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.custom-select .select__control:hover {
+  border-color: hsl(var(--input));
+}
+
+.custom-select .select__control--is-focused {
+  border-color: hsl(var(--ring));
+  box-shadow: 0 0 0 2px hsl(var(--ring) / 0.1);
+  outline: none;
+}
+
+.custom-select .select__control--is-disabled {
+  background-color: hsl(var(--muted));
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Multi-value styles */
+.custom-select .select__multi-value {
+  background-color: hsl(var(--secondary));
+  border-radius: calc(var(--radius) - 4px);
+  font-size: 0.75rem;
+  margin: 2px;
+}
+
+.custom-select .select__multi-value__label {
+  color: hsl(var(--secondary-foreground));
+  font-weight: 500;
+  padding: 0.25rem 0.5rem;
+}
+
+.custom-select .select__multi-value__remove {
+  color: hsl(var(--muted-foreground));
+  border-radius: 0 calc(var(--radius) - 4px) calc(var(--radius) - 4px) 0;
+  padding: 0 4px;
+}
+
+.custom-select .select__multi-value__remove:hover {
+  background-color: hsl(var(--destructive));
+  color: hsl(var(--destructive-foreground));
+}
+
+/* Dropdown menu */
+.custom-select .select__menu {
+  background-color: hsl(var(--popover));
+  border: 1px solid hsl(var(--border));
+  border-radius: calc(var(--radius) - 2px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  font-size: 0.875rem;
+  z-index: 50;
+}
+
+.custom-select .select__option {
+  background-color: transparent;
+  color: hsl(var(--popover-foreground));
+  padding: 0.375rem 0.75rem;
+  cursor: pointer;
+}
+
+.custom-select .select__option--is-focused {
+  background-color: hsl(var(--accent));
+  color: hsl(var(--accent-foreground));
+}
+
+.custom-select .select__option--is-selected {
+  background-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+}
+
+/* Input text */
+.custom-select .select__input {
+  color: hsl(var(--foreground));
+}
+
+.custom-select .select__placeholder {
+  color: hsl(var(--muted-foreground));
+}
+
+/* Indicators */
+.custom-select .select__indicator {
+  color: hsl(var(--muted-foreground));
+  padding: 4px;
+}
+
+.custom-select .select__indicator:hover {
+  color: hsl(var(--foreground));
+}
+
+.custom-select .select__indicator-separator {
+  background-color: hsl(var(--border));
+}
+
+/* Clear indicator */
+.custom-select .select__clear-indicator:hover {
+  color: hsl(var(--destructive));
+}
+
+/* Loading indicator */
+.custom-select .select__loading-indicator {
+  color: hsl(var(--primary));
+}
+

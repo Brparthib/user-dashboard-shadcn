@@ -1,49 +1,49 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { CalendarIcon } from "lucide-react"
+import * as React from "react";
+import { CalendarIcon } from "lucide-react";
 
-import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
+} from "@/components/ui/popover";
 
 function formatDate(date: Date | undefined) {
   if (!date) {
-    return ""
+    return "";
   }
 
   return date.toLocaleDateString("en-US", {
     day: "2-digit",
     month: "long",
     year: "numeric",
-  })
+  });
 }
 
 function isValidDate(date: Date | undefined) {
   if (!date) {
-    return false
+    return false;
   }
-  return !isNaN(date.getTime())
+  return !isNaN(date.getTime());
 }
 
 export default function DateInput() {
-  const [open, setOpen] = React.useState(false)
+  const [open, setOpen] = React.useState(false);
   const [date, setDate] = React.useState<Date | undefined>(
     new Date(Date.now())
-  )
-  const [month, setMonth] = React.useState<Date | undefined>(date)
-  const [value, setValue] = React.useState(formatDate(date))
+  );
+  const [month, setMonth] = React.useState<Date | undefined>(date);
+  const [value, setValue] = React.useState(formatDate(date));
 
   return (
     <div className="flex flex-col gap-3">
       <Label htmlFor="date" className="px-1">
-        Subscription Date
+        Date of birth
       </Label>
       <div className="relative flex gap-2">
         <Input
@@ -52,17 +52,17 @@ export default function DateInput() {
           placeholder="June 01, 2025"
           className="bg-background pr-10"
           onChange={(e) => {
-            const date = new Date(e.target.value)
-            setValue(e.target.value)
+            const date = new Date(e.target.value);
+            setValue(e.target.value);
             if (isValidDate(date)) {
-              setDate(date)
-              setMonth(date)
+              setDate(date);
+              setMonth(date);
             }
           }}
           onKeyDown={(e) => {
             if (e.key === "ArrowDown") {
-              e.preventDefault()
-              setOpen(true)
+              e.preventDefault();
+              setOpen(true);
             }
           }}
         />
@@ -90,14 +90,14 @@ export default function DateInput() {
               month={month}
               onMonthChange={setMonth}
               onSelect={(date) => {
-                setDate(date)
-                setValue(formatDate(date))
-                setOpen(false)
+                setDate(date);
+                setValue(formatDate(date));
+                setOpen(false);
               }}
             />
           </PopoverContent>
         </Popover>
       </div>
     </div>
-  )
+  );
 }

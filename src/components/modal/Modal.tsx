@@ -9,17 +9,23 @@ import {
 import { Button } from "../ui/button";
 import type React from "react";
 
-export default function Modal({
-  title,
-  children,
-}: {
+interface MyDialogProps {
+  isOpen: boolean;
+  onClose: () => void;
   title: string;
   children: React.ReactNode;
-}) {
+}
+
+export default function Modal({
+  isOpen,
+  onClose,
+  title,
+  children,
+}: MyDialogProps) {
   return (
     <>
-      <Dialog>
-        <DialogTrigger>
+      <Dialog open={isOpen} onOpenChange={onClose}>
+        {/* <DialogTrigger>
           <Button
             variant="outline"
             className="hover:bg-primary hover:text-white transition-all duration-300 active:scale-95 cursor-pointer"
@@ -27,7 +33,7 @@ export default function Modal({
           >
             Create User
           </Button>
-        </DialogTrigger>
+        </DialogTrigger> */}
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{title}</DialogTitle>

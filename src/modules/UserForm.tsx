@@ -1,7 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -17,52 +16,69 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { designations, skillOptions } from "@/utils/constant";
 import DateInput from "@/components/DateInput";
-import Select from "react-select";
-import { useEffect, useRef, useState } from "react";
+import Select, { type MultiValue, type SingleValue } from "react-select";
 import { TrashIcon } from "lucide-react";
+import { useAppReducer } from "@/hooks/useAppReducer";
+import type { TUser } from "@/types";
+import { useEffect } from "react";
+// import "./UserForm.css";
 
 const formSchema = z.object({
-  username: z.string().min(2, {
+  name: z.string().min(2, {
     message: "Username must be at least 2 characters.",
+  }),
+  email: z.email(),
+  bio: z.string().min(2, {
+    message: "Bio must be at least 2 characters.",
   }),
 });
 
+type TForm = z.infer<typeof formSchema>;
+
 export function UserForm() {
-  const fileInput = useRef<HTMLInputElement>(null);
-  const form = useForm();
-  const [uploadedFile, setUploadedFile] = useState<File | undefined>(undefined);
-  const [preview, setPreview] = useState<string | undefined>(undefined);
-
-  useEffect(() => {
-    if (!uploadedFile) {
-      setPreview(undefined);
-      return;
-    }
-
-    const objectURL = URL.createObjectURL(uploadedFile);
-    console.log(objectURL);
-    setPreview(objectURL);
-
-    return () => URL.revokeObjectURL(objectURL);
-  }, [uploadedFile]);
+  const form = useForm<TForm>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      bio: "",
+    },
+  });
+  const { state, actions } = useAppReducer();
 
   // image upload
-  const handleImage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (!event.target.files || event.target.files.length === 0) {
-      setUploadedFile(undefined);
+  const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) {
       return;
     }
 
-    const file = event.target.files[0];
+    const file = e.target.files[0];
     console.log(file);
     console.log("File Substring: ", file.type.substring(0, 5));
-    setUploadedFile(file);
+    if (file && file.type.substring(0, 5) === "image") {
+      actions.handleImageUpload(file);
+    }
   };
 
   // form submission
-  const onSubmit = () => {
-    console.log("Thank You!");
+  const onSubmit = async (data: TForm) => {
+    const newUser: TUser = {
+      id: state.userData.length + 1,
+      ...data,
+      dob: state.dob,
+      gender: state.gender,
+      designation: state.designation,
+      skills: state.skills,
+      image: state.imagePreview,
+    };
+    actions.setUserData([...state.userData, newUser])
   };
+
+  useEffect(() => {
+    if (state.userData) {
+      console.log("From UserForm", state.userData);
+    }
+  }, [state.userData]);
 
   return (
     <Form {...form}>
@@ -71,7 +87,7 @@ export function UserForm() {
         <div className="flex justify-between items-top gap-4">
           <FormField
             control={form.control}
-            name="username"
+            name="name"
             render={({ field }) => (
               <FormItem className="grow">
                 <FormLabel className="text-sm">Full Name</FormLabel>
@@ -108,27 +124,47 @@ export function UserForm() {
         <div className="space-y-4 md:space-y-0 md:flex justify-between items-start gap-4">
           {/* date picker */}
           <div className="grow items-start">
-            {/* <Label className="mt-1 mb-4">Date of birth</Label> */}
-            <DateInput />
+            <DateInput
+            // onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            //   actions.setDob((e?.target as HTMLInputElement).value);
+            // }}
+            // value={state.dob?.toString().split("T")[0]}
+            />
           </div>
           {/* gender */}
           <div className="grow items-start">
             <Label className="mb-4">Gender</Label>
             <RadioGroup className="flex items-center" defaultValue="male">
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="male" id="option-one" />
-                <Label htmlFor="option-one">Male</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="female" id="option-two" />
-                <Label htmlFor="option-two">Female</Label>
-              </div>
+              {["male", "female"].map((gender, i) => (
+                <div key={i} className="flex items-center space-x-2">
+                  <RadioGroupItem
+                    onChange={(e) =>
+                      actions.setGender((e?.target as HTMLInputElement).value)
+                    }
+                    value={gender}
+                    id={gender}
+                  />
+                  <Label htmlFor="option-one" className="capitalize">
+                    {gender}
+                  </Label>
+                </div>
+              ))}
             </RadioGroup>
           </div>
           {/* select */}
           <div className="grow">
             <Label className="mb-2">Designation</Label>
-            <Select options={designations} />
+            <Select
+              options={designations}
+              onChange={(
+                d: SingleValue<{
+                  value: string;
+                  label: string;
+                }>
+              ) => {
+                actions.setDesignation(d?.value as string);
+              }}
+            />
           </div>
         </div>
         {/* skills field */}
@@ -139,7 +175,16 @@ export function UserForm() {
             isMulti
             name="skills"
             options={skillOptions}
-            className="basic-multi-select"
+            onChange={(
+              s: MultiValue<{
+                value: string;
+                label: string;
+              }>
+            ) => {
+              const selectedSkills = s.map((v) => v.value);
+              actions.setSkills(selectedSkills as string[]);
+            }}
+            // className="custom-select"
             classNamePrefix="select"
           />
         </div>
@@ -147,7 +192,7 @@ export function UserForm() {
         <div className="flex justify-between items-center gap-4">
           <FormField
             control={form.control}
-            name="username"
+            name="bio"
             render={({ field }) => (
               <FormItem className="grow">
                 <FormLabel className="text-sm">Bio</FormLabel>
@@ -172,21 +217,19 @@ export function UserForm() {
               accept="image/*"
               id="picture"
               type="file"
-              ref={fileInput}
               className="cursor-pointer"
             />
-            {uploadedFile && (
+            {state.imagePreview && (
               <div className="flex items-start mt-5 gap-2">
                 <div className="w-[150px] h-[150px]">
-                  {preview && <img src={preview} alt="Preview" />}
+                  {state.imagePreview && (
+                    <img src={state.imagePreview} alt="Preview" />
+                  )}
                 </div>
                 <Button
                   variant="outline"
                   onClick={() => {
-                    setUploadedFile(undefined);
-                    if (fileInput.current) {
-                      fileInput.current.value = "";
-                    }
+                    actions.setImagePreview("");
                   }}
                   size="sm"
                   className="active:scale-95 rounded text-rose-600 hover:text-rose-600 hover:bg-rose-50 cursor-pointer"
@@ -196,6 +239,14 @@ export function UserForm() {
               </div>
             )}
           </div>
+        </div>
+        {/* error message */}
+        <div>
+          {state.error && (
+            <div className="p-3 bg-red-100 text-red-700 rounded-md">
+              {state.error}
+            </div>
+          )}
         </div>
         <div className="flex justify-end items-center gap-2">
           <Button type="submit" className="">

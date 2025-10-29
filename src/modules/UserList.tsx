@@ -3,7 +3,6 @@ import ActionButton from "@/components/table/ActionButton";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -11,39 +10,42 @@ import {
 } from "@/components/ui/table";
 import type { TUser } from "@/types";
 import { UserForm } from "./UserForm";
-
-const userData: TUser[] = [
-  {
-    id: 1,
-    name: "Ariana Gomez",
-    email: "ariana.gomez@example.com",
-    dob: "1996-04-12",
-    image: "https://randomuser.me/api/portraits/women/65.jpg",
-    gender: "Female",
-    bio: "Frontend developer passionate about crafting elegant UI experiences with React and Tailwind CSS.",
-    designation: "Frontend Developer",
-    skills: ["HTML", "CSS", "JavaScript", "React.js", "Tailwind CSS"],
-  },
-  {
-    id: 2,
-    name: "Rafiul Hasan",
-    email: "rafiul.hasan@example.com",
-    dob: "1998-09-25",
-    image: "https://randomuser.me/api/portraits/men/12.jpg",
-    gender: "Male",
-    bio: "Full Stack Developer who loves building scalable web applications using the MERN stack.",
-    designation: "Full Stack Developer",
-    skills: ["React.js", "Node.js", "Express.js", "MongoDB", "Redux"],
-  },
-];
+import { useEffect } from "react";
+import { useAppReducer } from "@/hooks/useAppReducer";
+import { Button } from "@/components/ui/button";
 
 export default function UserList() {
+  const { state, actions } = useAppReducer();
+
+  let userData: TUser[] = [];
+  useEffect(() => {
+    if (state.userData) {
+      console.log("From UserList", state.userData);
+      userData = state.userData;
+    }
+  }, [state.userData]);
+
   return (
     <>
       <div>
         <div className="flex justify-end mb-4">
-          <Modal title={"Create User"}>
-            <UserForm />
+          <Button
+            onClick={() => {
+              actions.setModalOpen(true);
+              actions.setFormType("create");
+            }}
+            variant="outline"
+            className="hover:bg-primary hover:text-white transition-all duration-300 active:scale-95 cursor-pointer"
+            size="sm"
+          >
+            Create User
+          </Button>
+          <Modal
+            isOpen={state.modalOpen}
+            onClose={() => actions.setModalOpen(false)}
+            title={state.formType === "create" ? "Create User" : "Update User"}
+          >
+            {state.formType === "create" ? <UserForm /> : <UserForm />}
           </Modal>
         </div>
         <Table>
@@ -59,7 +61,7 @@ export default function UserList() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {userData.map((user, index) => (
+            {userData?.map((user, index) => (
               <TableRow key={user.id}>
                 <TableCell className="font-medium">{index + 1}</TableCell>
                 <TableCell>{user.name}</TableCell>

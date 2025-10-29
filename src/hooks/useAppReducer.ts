@@ -1,8 +1,17 @@
+import type { TUser } from "@/types";
 import { appReducer, initialState } from "@/utils/reducer";
 import { useReducer } from "react";
 
 export function useAppReducer() {
   const [state, dispatch] = useReducer(appReducer, initialState);
+
+  const setModalOpen = (open: boolean) => {
+    dispatch({ type: "SET_MODAL_OPEN", payload: open });
+  };
+
+  const setUserData = (user: TUser[]) => {
+    dispatch({ type: "SET_USER_DATA", payload: user });
+  };
 
   const setDob = (date: string) => {
     dispatch({ type: "SET_DOB", payload: date });
@@ -26,6 +35,10 @@ export function useAppReducer() {
 
   const setImagePreview = (previewUrl: string) => {
     dispatch({ type: "SET_IMAGE_PREVIEW", payload: previewUrl });
+  };
+
+  const setFormType = (formType: string) => {
+    dispatch({ type: "SET_FORM_TYPE", payload: formType });
   };
 
   const setLoading = (loading: boolean) => {
@@ -65,12 +78,15 @@ export function useAppReducer() {
   return {
     state,
     actions: {
+      setModalOpen,
+      setUserData,
       setDob,
       setGender,
       setDesignation,
       setSkills,
       setUploadedImage,
       setImagePreview,
+      setFormType,
       setLoading,
       setError,
       resetForm,

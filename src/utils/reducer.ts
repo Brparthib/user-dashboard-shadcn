@@ -1,18 +1,35 @@
 import type { AppAction, AppState } from "@/types";
 
 export const initialState: AppState = {
+  modalOpen: false,
+  userData: [],
   dob: "",
   gender: "",
   designation: "",
   skills: [],
   uploadedImage: null,
   imagePreview: "",
+  formType: "",
   loading: false,
   error: null,
 };
 
 export function appReducer(state: AppState, action: AppAction): AppState {
   switch (action.type) {
+    case "SET_MODAL_OPEN":
+      return {
+        ...state,
+        modalOpen: action.payload,
+        error: null,
+      };
+
+    case "SET_USER_DATA":
+      return {
+        ...state,
+        userData: action.payload,
+        error: null,
+      };
+
     case "SET_DOB":
       return {
         ...state,
@@ -49,6 +66,12 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       };
 
     case "SET_IMAGE_PREVIEW":
+      return {
+        ...state,
+        imagePreview: action.payload,
+      };
+
+    case "SET_FORM_TYPE":
       return {
         ...state,
         imagePreview: action.payload,
