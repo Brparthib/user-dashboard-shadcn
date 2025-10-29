@@ -4,9 +4,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
-import { Button } from "../ui/button";
 import type React from "react";
 
 interface MyDialogProps {
@@ -25,15 +23,6 @@ export default function Modal({
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        {/* <DialogTrigger>
-          <Button
-            variant="outline"
-            className="hover:bg-primary hover:text-white transition-all duration-300 active:scale-95 cursor-pointer"
-            size="sm"
-          >
-            Create User
-          </Button>
-        </DialogTrigger> */}
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{title}</DialogTitle>
