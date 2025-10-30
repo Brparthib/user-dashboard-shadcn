@@ -1,5 +1,5 @@
-import Modal from "@/components/modal/Modal";
-import ActionButton from "@/components/table/ActionButton";
+import Modal from "@/components/shared/Modal";
+import ActionButton from "@/components/shared/ActionButton";
 import {
   Table,
   TableBody,
@@ -8,22 +8,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { TUser } from "@/types";
 import { UserForm } from "./UserForm";
-import { useEffect } from "react";
-import { useAppReducer } from "@/hooks/useAppReducer";
 import { Button } from "@/components/ui/button";
+import { useAppContext } from "@/provider/AppProvider";
+import { updateUser } from "@/utils/constant";
+import Alert from "@/components/shared/AlertDialog";
+import { Badge } from "@/components/ui/badge";
 
 export default function UserList() {
-  const { state, actions } = useAppReducer();
-
-  let userData: TUser[] = [];
-  useEffect(() => {
-    if (state.userData) {
-      console.log("From UserList", state.userData);
-      userData = state.userData;
-    }
-  }, [state.userData]);
+  const { state, actions } = useAppContext();
 
   return (
     <>
@@ -33,6 +26,7 @@ export default function UserList() {
             onClick={() => {
               actions.setModalOpen(true);
               actions.setFormType("create");
+              actions.setSelectedUser(updateUser);
             }}
             variant="outline"
             className="hover:bg-primary hover:text-white transition-all duration-300 active:scale-95 cursor-pointer"
@@ -40,14 +34,8 @@ export default function UserList() {
           >
             Create User
           </Button>
-          <Modal
-            isOpen={state.modalOpen}
-            onClose={() => actions.setModalOpen(false)}
-            title={state.formType === "create" ? "Create User" : "Update User"}
-          >
-            {state.formType === "create" ? <UserForm /> : <UserForm />}
-          </Modal>
         </div>
+        {/* User list table */}
         <Table>
           <TableHeader className="bg-primary">
             <TableRow>
@@ -61,21 +49,40 @@ export default function UserList() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {userData?.map((user, index) => (
+            {state.userData?.map((user, index) => (
               <TableRow key={user.id}>
                 <TableCell className="font-medium">{index + 1}</TableCell>
                 <TableCell>{user.name}</TableCell>
                 <TableCell>{user.email}</TableCell>
-                <TableCell>{user.dob}</TableCell>
+                <TableCell>
+                  <Badge variant="secondary" className="select-none">{user.dob}</Badge>
+                </TableCell>
                 <TableCell>{user.gender}</TableCell>
                 <TableCell>{user.designation}</TableCell>
                 <TableCell className="flex justify-end">
-                  <ActionButton />
+                  <ActionButton user={user} />
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
+
+        {/* Modal */}
+        <Modal
+          isOpen={state.modalOpen}
+          onClose={() => actions.setModalOpen(false)}
+          title={state.formType === "create" ? "Create User" : "Update User"}
+        >
+          {state.formType === "create" ? <UserForm /> : <UserForm />}
+        </Modal>
+
+        {/* Alert  */}
+        <div>
+          <Alert
+            isOpen={state.alertOpen}
+            onClose={() => actions.setAlertOpen(false)}
+          />
+        </div>
       </div>
     </>
   );

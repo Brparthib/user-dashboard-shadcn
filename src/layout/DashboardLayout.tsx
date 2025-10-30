@@ -1,5 +1,5 @@
-import { AppSidebar } from "@/components/app-sidebar";
-import { ModeToggle } from "@/components/modeToggler";
+import { AppSidebar } from "@/components/shared/AppSidebar";
+import { ModeToggle } from "@/components/shared/ModeToggler";
 import {
   SidebarInset,
   SidebarProvider,

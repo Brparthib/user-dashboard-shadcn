@@ -1,8 +1,11 @@
 import type { AppAction, AppState } from "@/types";
+import { updateUser } from "./constant";
 
 export const initialState: AppState = {
   modalOpen: false,
+  alertOpen: false,
   userData: [],
+  selectedUser: updateUser,
   dob: "",
   gender: "",
   designation: "",
@@ -23,10 +26,24 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         error: null,
       };
 
+    case "SET_ALERT_OPEN":
+      return {
+        ...state,
+        alertOpen: action.payload,
+        error: null,
+      };
+
     case "SET_USER_DATA":
       return {
         ...state,
         userData: action.payload,
+        error: null,
+      };
+
+    case "SET_SELECTED_USER":
+      return {
+        ...state,
+        selectedUser: action.payload,
         error: null,
       };
 
@@ -74,7 +91,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
     case "SET_FORM_TYPE":
       return {
         ...state,
-        imagePreview: action.payload,
+        formType: action.payload,
       };
 
     case "SET_LOADING":

@@ -29,3 +29,14 @@ export const designations = [
   { value: "project_manager", label: "Project Manager" },
   { value: "technical_architect", label: "Technical Architect" },
 ];
+
+export const updateUser = {
+  name: "",
+  email: "",
+  dob: "",
+  gender: "",
+  designation: "",
+  bio: "",
+  skills: [],
+  image: "",
+};

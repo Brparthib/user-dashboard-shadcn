@@ -1,3 +1,5 @@
+import type { LucideIcon } from "lucide-react";
+
 export type TUser = {
   id?: number;
   name: string;
@@ -16,7 +18,9 @@ export type Tdesignations = {
 
 export interface AppState {
   modalOpen: boolean;
+  alertOpen: boolean;
   userData: TUser[];
+  selectedUser: TUser;
   dob: string;
   gender: string;
   designation: string;
@@ -30,7 +34,9 @@ export interface AppState {
 
 export type AppAction =
   | { type: "SET_MODAL_OPEN"; payload: boolean }
+  | { type: "SET_ALERT_OPEN"; payload: boolean }
   | { type: "SET_USER_DATA"; payload: TUser[] }
+  | { type: "SET_SELECTED_USER"; payload: TUser }
   | { type: "SET_DOB"; payload: string }
   | { type: "SET_GENDER"; payload: string }
   | { type: "SET_DESIGNATION"; payload: string }
@@ -41,3 +47,14 @@ export type AppAction =
   | { type: "SET_LOADING"; payload: boolean }
   | { type: "SET_ERROR"; payload: string | null }
   | { type: "RESET_FORM" };
+
+export type TSidebarItem = {
+  title: string;
+  url: string;
+  icon?: LucideIcon;
+  isActive?: boolean;
+  items?: TSidebarItem[];
+  component?: React.ComponentType;
+};
+
+export type TSidebarItems = TSidebarItem[];

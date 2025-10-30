@@ -1,7 +1,8 @@
 import App from "@/App";
 import DashboardLayout from "@/layout/DashboardLayout";
-import UserList from "@/modules/UserList";
+import { generateRoutes } from "@/utils/generateRoutes";
 import { createBrowserRouter } from "react-router";
+import { SidebarItems } from "./SidebarItems";
 
 export const router = createBrowserRouter([
   {
@@ -13,9 +14,10 @@ export const router = createBrowserRouter([
     path: "/dashboard",
     children: [
       {
-        Component: UserList,
-        path: "user-list",
+        index: true,
+        element: <div>Dashboard Home</div>,
       },
+      ...generateRoutes(SidebarItems),
     ],
   },
 ]);

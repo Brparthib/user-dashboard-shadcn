@@ -15,13 +15,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { designations, skillOptions } from "@/utils/constant";
-import DateInput from "@/components/DateInput";
+import DateInput from "@/components/shared/DateInput";
 import Select, { type MultiValue, type SingleValue } from "react-select";
 import { TrashIcon } from "lucide-react";
-import { useAppReducer } from "@/hooks/useAppReducer";
 import type { TUser } from "@/types";
-import { useEffect } from "react";
-// import "./UserForm.css";
+import { useAppContext } from "@/provider/AppProvider";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -36,15 +35,15 @@ const formSchema = z.object({
 type TForm = z.infer<typeof formSchema>;
 
 export function UserForm() {
+  const { state, actions } = useAppContext();
   const form = useForm<TForm>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      email: "",
-      bio: "",
+      name: state.selectedUser.name,
+      email: state.selectedUser.email,
+      bio: state.selectedUser.bio,
     },
   });
-  const { state, actions } = useAppReducer();
 
   // image upload
   const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -62,23 +61,44 @@ export function UserForm() {
 
   // form submission
   const onSubmit = async (data: TForm) => {
-    const newUser: TUser = {
-      id: state.userData.length + 1,
-      ...data,
-      dob: state.dob,
-      gender: state.gender,
-      designation: state.designation,
-      skills: state.skills,
-      image: state.imagePreview,
-    };
-    actions.setUserData([...state.userData, newUser])
-  };
-
-  useEffect(() => {
-    if (state.userData) {
-      console.log("From UserForm", state.userData);
+    if (state.selectedUser.id) {
+      const updatedUser = state.userData.map((user) =>
+        user.id === state.selectedUser.id
+          ? {
+              ...user,
+              name: data.name,
+              email: data.email,
+              dob: state.dob,
+              image: state.imagePreview,
+              gender: state.gender,
+              bio: data.bio,
+              designation: state.designation,
+              skills: state.skills,
+            }
+          : user
+      );
+      actions.setUserData(updatedUser);
+      actions.setModalOpen(false);
+      actions.setImagePreview("");
+      actions.setLoading(false);
+      toast.success("User Updated Successfully");
+    } else {
+      const newUser: TUser = {
+        id: state.userData.length + 1,
+        ...data,
+        dob: state.dob,
+        gender: state.gender,
+        designation: state.designation,
+        skills: state.skills,
+        image: state.imagePreview,
+      };
+      actions.setUserData([...state.userData, newUser]);
+      actions.setModalOpen(false);
+      actions.setImagePreview("");
+      actions.setLoading(false);
+      toast.success("User Create Successfully");
     }
-  }, [state.userData]);
+  };
 
   return (
     <Form {...form}>
@@ -124,26 +144,19 @@ export function UserForm() {
         <div className="space-y-4 md:space-y-0 md:flex justify-between items-start gap-4">
           {/* date picker */}
           <div className="grow items-start">
-            <DateInput
-            // onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            //   actions.setDob((e?.target as HTMLInputElement).value);
-            // }}
-            // value={state.dob?.toString().split("T")[0]}
-            />
+            <DateInput />
           </div>
           {/* gender */}
           <div className="grow items-start">
             <Label className="mb-4">Gender</Label>
-            <RadioGroup className="flex items-center" defaultValue="male">
+            <RadioGroup
+              className="flex items-center"
+              value={state.gender}
+              onValueChange={actions.setGender}
+            >
               {["male", "female"].map((gender, i) => (
                 <div key={i} className="flex items-center space-x-2">
-                  <RadioGroupItem
-                    onChange={(e) =>
-                      actions.setGender((e?.target as HTMLInputElement).value)
-                    }
-                    value={gender}
-                    id={gender}
-                  />
+                  <RadioGroupItem value={gender} id={gender} />
                   <Label htmlFor="option-one" className="capitalize">
                     {gender}
                   </Label>

@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 import { CalendarIcon } from "lucide-react";
 
@@ -12,6 +10,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useAppContext } from "@/provider/AppProvider";
 
 function formatDate(date: Date | undefined) {
   if (!date) {
@@ -39,6 +38,13 @@ export default function DateInput() {
   );
   const [month, setMonth] = React.useState<Date | undefined>(date);
   const [value, setValue] = React.useState(formatDate(date));
+  const { actions } = useAppContext();
+
+  React.useEffect(() => {
+    if (date) {
+      actions.setDob(date.toDateString());
+    }
+  }, [date]);
 
   return (
     <div className="flex flex-col gap-3">

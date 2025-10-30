@@ -1,16 +1,27 @@
 import type { TUser } from "@/types";
 import { appReducer, initialState } from "@/utils/reducer";
-import { useReducer } from "react";
+import { useReducer, useRef } from "react";
+import { useReactToPrint } from "react-to-print";
 
 export function useAppReducer() {
   const [state, dispatch] = useReducer(appReducer, initialState);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const reactToPrintFn = useReactToPrint({ contentRef });
 
   const setModalOpen = (open: boolean) => {
     dispatch({ type: "SET_MODAL_OPEN", payload: open });
   };
 
+  const setAlertOpen = (open: boolean) => {
+    dispatch({ type: "SET_ALERT_OPEN", payload: open });
+  };
+
   const setUserData = (user: TUser[]) => {
     dispatch({ type: "SET_USER_DATA", payload: user });
+  };
+
+  const setSelectedUser = (user: TUser) => {
+    dispatch({ type: "SET_SELECTED_USER", payload: user });
   };
 
   const setDob = (date: string) => {
@@ -75,11 +86,22 @@ export function useAppReducer() {
     reader.readAsDataURL(file);
   };
 
+  const deleteUser = (user: TUser) => {
+    const updatedUsers = state.userData.filter((data) => data.id !== user.id);
+    dispatch({ type: "SET_USER_DATA", payload: updatedUsers });
+  };
+
+  const printUser = () => {
+    reactToPrintFn();
+  };
+
   return {
     state,
     actions: {
       setModalOpen,
+      setAlertOpen,
       setUserData,
+      setSelectedUser,
       setDob,
       setGender,
       setDesignation,
@@ -91,6 +113,9 @@ export function useAppReducer() {
       setError,
       resetForm,
       handleImageUpload,
+      deleteUser,
+      printUser,
     },
+    contentRef,
   };
 }
