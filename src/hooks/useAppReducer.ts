@@ -92,7 +92,11 @@ export function useAppReducer() {
   };
 
   const printUser = () => {
-    reactToPrintFn();
+    if (contentRef.current) {
+      reactToPrintFn();
+    } else {
+      console.warn("No content found to print.");
+    }
   };
 
   return {

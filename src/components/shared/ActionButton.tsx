@@ -28,8 +28,8 @@ export default function ActionButton({ user }: { user: TUser }) {
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={() => {
-            actions.printUser();
             actions.setSelectedUser(user);
+            actions.printUser();
           }}
           className="cursor-pointer"
         >
